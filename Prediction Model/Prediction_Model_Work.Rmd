@@ -3,4 +3,56 @@ title: "Capstone Prediction Model Development"
 output: html_notebook
 ---
 
+## Tasks to accomplish
 
+1. Build a predictive model based on the previous data modeling steps - you may combine the models in any way you think is appropriate.
+2. Evaluate the model for efficiency and accuracy - use timing software to evaluate the computational complexity of your model. Evaluate the model accuracy using different metrics like perplexity, accuracy at the first word, second word, and third word.
+
+## Questions to consider
+
+1. How does the model perform for different choices of the parameters and size of the model?
+2. How much does the model slow down for the performance you gain?
+3. Does perplexity correlate with the other measures of accuracy?
+4. Can you reduce the size of the model (number of parameters) without reducing performance?
+
+## Tasks to accomplish
+
+1. Explore new models and data to improve your predictive model.
+2. Evaluate your new predictions on both accuracy and efficiency.
+
+## Questions to consider
+
+1. What are some alternative data sets you could consider using?
+2. What are ways in which the n-gram model may be inefficient?
+3. What are the most commonly missed n-grams? Can you think of a reason why they would be missed and fix that?
+4. What are some other things that other people have tried to improve their model?
+5. Can you estimate how uncertain you are about the words you are predicting?
+
+## Tasks to accomplish
+
+1. Create a data product to show off your prediction algorithm You should create a Shiny app that accepts an n-gram and predicts the next word.
+
+## Questions to consider
+
+1. What are the most interesting ways you could show off your algorithm?
+2. Are there any data visualizations you think might be helpful (look at the Swiftkey data dashboard if you have it loaded on your phone)?
+3. How should you document the use of your data product (separately from how you created it) so that others can rapidly deploy your algorithm?
+
+## Tips, tricks, and hints
+
+1. Consider the size of the predictive model you have developed. You may have to sacrifice some accuracy to have a fast enough/small enough model to load into Shiny.
+
+
+## Tasks to accomplish
+
+1. Create a slide deck promoting your product. Write 5 slides using RStudio Presenter explaining your product and why it is awesome!
+
+## Questions to consider
+
+1. How can you briefly explain how your predictive model works?
+2. How can you succinctly quantitatively summarize the performance of your prediction algorithm?
+3. How can you show the user how the product works?
+
+## Tips, tricks, and hints
+
+1. The Rstudio presentation information is available here ([https://support.rstudio.com/hc/en-us/articles/200486468-Authoring-R-Presentations](https://support.rstudio.com/hc/en-us/articles/200486468-Authoring-R-Presentations)).

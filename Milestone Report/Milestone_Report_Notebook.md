@@ -284,3 +284,6 @@ print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(sta
 ![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-5-6.png)<!-- -->
 
 Interesting.  I didn't remove punctuation, so the contractions being split into two words ("don't" is now "don t") in twitter is an artifact of the text.  I think this is even more of a sign that we need to account for the different text sources; that is, I'm going to assume that someone who wants auto-predict in twitter would like me to predict "don t" sometimes.  And while the contractions difference above isn't saving any characters, twitter posts are limited to character counts, so of course they'll have different writing styles!
+
+## Next steps
+The end goal for this capstone (based on what I've gathered from watching future weeks' videos and readings) is to develop a prediction model to predict the next word in a sequence of text, deploy it to shiny, and also develop a small slidify presentation to pitch it.  My goal is to implemnt a backoff model since I've never done that before, but I'll try some other things along the way, and maybe that's what will make it into the final model.  Ultimately, I've also got to consider the processing limitations of the free shiny server I'll be using (who knows, maybe I'll stand up my own server to host it there!).

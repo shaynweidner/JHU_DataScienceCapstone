@@ -18,13 +18,13 @@ The goal of this capstone is to create a predictive text model; that is, we will
 ## Pull in data
 ```{r, warning=FALSE, cache=TRUE}
 setwd("~/JHU_DataScienceCapstone")
-con <- file("Data/en_US/en_US.twitter.txt", "rb")
+con <- file("Data/en_US.twitter.txt", "rb")
 twitterData <- readLines(con)
 close(con)
-con <- file("Data/en_US/en_US.blogs.txt", "rb")
+con <- file("Data/en_US.blogs.txt", "rb")
 blogData <- readLines(con)
 close(con)
-con <- file("Data/en_US/en_US.news.txt", "rb")
+con <- file("Data/en_US.news.txt", "rb")
 newsData <- readLines(con)
 close(con)
 head(twitterData,2)
@@ -38,10 +38,10 @@ I had to use the binary read ("rb") setting in *file()*, because it threw an err
 Interesting that the news and blog corpora are as short as they are...I wonder if they broke up entire articles/posts into paragraphs.  At any rate, let's continue with the EDA.
 
 ## Exploratory Data Analysis
-
+### Unigrams
 I want to see the most common words without any tokenization/stemming/lemmatization/stopword-removal (sampling down because my machine can't handle all of those documents).  Let's get those words first:
 
-```{r, warning=FALSE, cache=TRUE}
+```{r, warning=FALSE, cache=TRUE, message = FALSE}
 library(tm)
 library(slam)
 set.seed(5-6-2019)
@@ -88,7 +88,7 @@ print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(sta
 
 The results look logical: "the", "and", "for", "that", and "with" should all appear more oftan than the others, and "you" should be much more common in tweets than in blogs, and much less common in news articles than tweets or blogs.  So separate models for (or a model that accounts for) the different sources could be better than a model that doesn't distinguish between the different texts.  Next let's clean up the corpora, and we'll look at bigrams and trigrams.
 
-I initially was going to remove punctuation, remove numbers, lowercase everything, and lemmatize.  But I've decided against everything except for removing extra whitespace because we'll eventually want to predict what comes after numbers/punctuation as well as predict them after other words.  For instance, we don't want to predict a lemmatized word, because that often won't make sense.  We also would want to predict a capitalized word after a period.  So I'll do my bigram/trigram analysis without that pre-processing done:
+I initially was going to remove punctuation, remove numbers, lowercase everything, and lemmatize.  But I've decided against everything except for removing extra whitespace because we'll eventually want to predict what comes after numbers/punctuation as well as predict them after other words (I'm leaving the code here just to show that I'm not lazy.  For instance, we don't want to predict a lemmatized word, because that often won't make sense.  We also would want to predict a capitalized word after a period.  So I'll do my bigram/trigram analysis without that pre-processing done:
 
 ```{r, warning=FALSE, cache=TRUE}
 library(textstem)
@@ -176,3 +176,6 @@ print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(sta
 ```
 
 Interesting.  I didn't remove punctuation, so the contractions being split into two words ("don't" is now "don t") in twitter is an artifact of the text.  I think this is even more of a sign that we need to account for the different text sources; that is, I'm going to assume that someone who wants auto-predict in twitter would like me to predict "don t" sometimes.  And while the contractions difference above isn't saving any characters, twitter posts are limited to character counts, so of course they'll have different writing styles!
+
+## Next steps
+The end goal for this capstone (based on what I've gathered from watching future weeks' videos and readings) is to develop a prediction model to predict the next word in a sequence of text, deploy it to shiny, and also develop a small slidify presentation to pitch it.  My goal is to implemnt a backoff model since I've never done that before and trying new things is waesome, but I'll try some other things along the way, and maybe that's what will make it into the final model.  Ultimately, I've also got to consider the processing limitations of the free shiny server I'll be using (who knows, maybe I'll stand up my own server to host it there!).

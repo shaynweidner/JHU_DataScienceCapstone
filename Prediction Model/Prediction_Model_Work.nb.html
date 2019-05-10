@@ -173,9 +173,82 @@ $(document).ready(function () {
 
 
 <!-- rnb-text-begin -->
+<div id="tasks-to-accomplish" class="section level2">
+<h2>Tasks to accomplish</h2>
+<ol style="list-style-type: decimal">
+<li>Build a predictive model based on the previous data modeling steps - you may combine the models in any way you think is appropriate.</li>
+<li>Evaluate the model for efficiency and accuracy - use timing software to evaluate the computational complexity of your model. Evaluate the model accuracy using different metrics like perplexity, accuracy at the first word, second word, and third word.</li>
+</ol>
+</div>
+<div id="questions-to-consider" class="section level2">
+<h2>Questions to consider</h2>
+<ol style="list-style-type: decimal">
+<li>How does the model perform for different choices of the parameters and size of the model?</li>
+<li>How much does the model slow down for the performance you gain?</li>
+<li>Does perplexity correlate with the other measures of accuracy?</li>
+<li>Can you reduce the size of the model (number of parameters) without reducing performance?</li>
+</ol>
+</div>
+<div id="tasks-to-accomplish-1" class="section level2">
+<h2>Tasks to accomplish</h2>
+<ol style="list-style-type: decimal">
+<li>Explore new models and data to improve your predictive model.</li>
+<li>Evaluate your new predictions on both accuracy and efficiency.</li>
+</ol>
+</div>
+<div id="questions-to-consider-1" class="section level2">
+<h2>Questions to consider</h2>
+<ol style="list-style-type: decimal">
+<li>What are some alternative data sets you could consider using?</li>
+<li>What are ways in which the n-gram model may be inefficient?</li>
+<li>What are the most commonly missed n-grams? Can you think of a reason why they would be missed and fix that?</li>
+<li>What are some other things that other people have tried to improve their model?</li>
+<li>Can you estimate how uncertain you are about the words you are predicting?</li>
+</ol>
+</div>
+<div id="tasks-to-accomplish-2" class="section level2">
+<h2>Tasks to accomplish</h2>
+<ol style="list-style-type: decimal">
+<li>Create a data product to show off your prediction algorithm You should create a Shiny app that accepts an n-gram and predicts the next word.</li>
+</ol>
+</div>
+<div id="questions-to-consider-2" class="section level2">
+<h2>Questions to consider</h2>
+<ol style="list-style-type: decimal">
+<li>What are the most interesting ways you could show off your algorithm?</li>
+<li>Are there any data visualizations you think might be helpful (look at the Swiftkey data dashboard if you have it loaded on your phone)?</li>
+<li>How should you document the use of your data product (separately from how you created it) so that others can rapidly deploy your algorithm?</li>
+</ol>
+</div>
+<div id="tips-tricks-and-hints" class="section level2">
+<h2>Tips, tricks, and hints</h2>
+<ol style="list-style-type: decimal">
+<li>Consider the size of the predictive model you have developed. You may have to sacrifice some accuracy to have a fast enough/small enough model to load into Shiny.</li>
+</ol>
+</div>
+<div id="tasks-to-accomplish-3" class="section level2">
+<h2>Tasks to accomplish</h2>
+<ol style="list-style-type: decimal">
+<li>Create a slide deck promoting your product. Write 5 slides using RStudio Presenter explaining your product and why it is awesome!</li>
+</ol>
+</div>
+<div id="questions-to-consider-3" class="section level2">
+<h2>Questions to consider</h2>
+<ol style="list-style-type: decimal">
+<li>How can you briefly explain how your predictive model works?</li>
+<li>How can you succinctly quantitatively summarize the performance of your prediction algorithm?</li>
+<li>How can you show the user how the product works?</li>
+</ol>
+</div>
+<div id="tips-tricks-and-hints-1" class="section level2">
+<h2>Tips, tricks, and hints</h2>
+<ol style="list-style-type: decimal">
+<li>The Rstudio presentation information is available here (<a href="https://support.rstudio.com/hc/en-us/articles/200486468-Authoring-R-Presentations" class="uri">https://support.rstudio.com/hc/en-us/articles/200486468-Authoring-R-Presentations</a>).</li>
+</ol>
 <!-- rnb-text-end -->
+</div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNhcHN0b25lIFByZWRpY3Rpb24gTW9kZWwgRGV2ZWxvcG1lbnQiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQoNCg==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNhcHN0b25lIFByZWRpY3Rpb24gTW9kZWwgRGV2ZWxvcG1lbnQiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQojIyBUYXNrcyB0byBhY2NvbXBsaXNoDQoNCjEuIEJ1aWxkIGEgcHJlZGljdGl2ZSBtb2RlbCBiYXNlZCBvbiB0aGUgcHJldmlvdXMgZGF0YSBtb2RlbGluZyBzdGVwcyAtIHlvdSBtYXkgY29tYmluZSB0aGUgbW9kZWxzIGluIGFueSB3YXkgeW91IHRoaW5rIGlzIGFwcHJvcHJpYXRlLg0KMi4gRXZhbHVhdGUgdGhlIG1vZGVsIGZvciBlZmZpY2llbmN5IGFuZCBhY2N1cmFjeSAtIHVzZSB0aW1pbmcgc29mdHdhcmUgdG8gZXZhbHVhdGUgdGhlIGNvbXB1dGF0aW9uYWwgY29tcGxleGl0eSBvZiB5b3VyIG1vZGVsLiBFdmFsdWF0ZSB0aGUgbW9kZWwgYWNjdXJhY3kgdXNpbmcgZGlmZmVyZW50IG1ldHJpY3MgbGlrZSBwZXJwbGV4aXR5LCBhY2N1cmFjeSBhdCB0aGUgZmlyc3Qgd29yZCwgc2Vjb25kIHdvcmQsIGFuZCB0aGlyZCB3b3JkLg0KDQojIyBRdWVzdGlvbnMgdG8gY29uc2lkZXINCg0KMS4gSG93IGRvZXMgdGhlIG1vZGVsIHBlcmZvcm0gZm9yIGRpZmZlcmVudCBjaG9pY2VzIG9mIHRoZSBwYXJhbWV0ZXJzIGFuZCBzaXplIG9mIHRoZSBtb2RlbD8NCjIuIEhvdyBtdWNoIGRvZXMgdGhlIG1vZGVsIHNsb3cgZG93biBmb3IgdGhlIHBlcmZvcm1hbmNlIHlvdSBnYWluPw0KMy4gRG9lcyBwZXJwbGV4aXR5IGNvcnJlbGF0ZSB3aXRoIHRoZSBvdGhlciBtZWFzdXJlcyBvZiBhY2N1cmFjeT8NCjQuIENhbiB5b3UgcmVkdWNlIHRoZSBzaXplIG9mIHRoZSBtb2RlbCAobnVtYmVyIG9mIHBhcmFtZXRlcnMpIHdpdGhvdXQgcmVkdWNpbmcgcGVyZm9ybWFuY2U/DQoNCiMjIFRhc2tzIHRvIGFjY29tcGxpc2gNCg0KMS4gRXhwbG9yZSBuZXcgbW9kZWxzIGFuZCBkYXRhIHRvIGltcHJvdmUgeW91ciBwcmVkaWN0aXZlIG1vZGVsLg0KMi4gRXZhbHVhdGUgeW91ciBuZXcgcHJlZGljdGlvbnMgb24gYm90aCBhY2N1cmFjeSBhbmQgZWZmaWNpZW5jeS4NCg0KIyMgUXVlc3Rpb25zIHRvIGNvbnNpZGVyDQoNCjEuIFdoYXQgYXJlIHNvbWUgYWx0ZXJuYXRpdmUgZGF0YSBzZXRzIHlvdSBjb3VsZCBjb25zaWRlciB1c2luZz8NCjIuIFdoYXQgYXJlIHdheXMgaW4gd2hpY2ggdGhlIG4tZ3JhbSBtb2RlbCBtYXkgYmUgaW5lZmZpY2llbnQ/DQozLiBXaGF0IGFyZSB0aGUgbW9zdCBjb21tb25seSBtaXNzZWQgbi1ncmFtcz8gQ2FuIHlvdSB0aGluayBvZiBhIHJlYXNvbiB3aHkgdGhleSB3b3VsZCBiZSBtaXNzZWQgYW5kIGZpeCB0aGF0Pw0KNC4gV2hhdCBhcmUgc29tZSBvdGhlciB0aGluZ3MgdGhhdCBvdGhlciBwZW9wbGUgaGF2ZSB0cmllZCB0byBpbXByb3ZlIHRoZWlyIG1vZGVsPw0KNS4gQ2FuIHlvdSBlc3RpbWF0ZSBob3cgdW5jZXJ0YWluIHlvdSBhcmUgYWJvdXQgdGhlIHdvcmRzIHlvdSBhcmUgcHJlZGljdGluZz8NCg0KIyMgVGFza3MgdG8gYWNjb21wbGlzaA0KDQoxLiBDcmVhdGUgYSBkYXRhIHByb2R1Y3QgdG8gc2hvdyBvZmYgeW91ciBwcmVkaWN0aW9uIGFsZ29yaXRobSBZb3Ugc2hvdWxkIGNyZWF0ZSBhIFNoaW55IGFwcCB0aGF0IGFjY2VwdHMgYW4gbi1ncmFtIGFuZCBwcmVkaWN0cyB0aGUgbmV4dCB3b3JkLg0KDQojIyBRdWVzdGlvbnMgdG8gY29uc2lkZXINCg0KMS4gV2hhdCBhcmUgdGhlIG1vc3QgaW50ZXJlc3Rpbmcgd2F5cyB5b3UgY291bGQgc2hvdyBvZmYgeW91ciBhbGdvcml0aG0/DQoyLiBBcmUgdGhlcmUgYW55IGRhdGEgdmlzdWFsaXphdGlvbnMgeW91IHRoaW5rIG1pZ2h0IGJlIGhlbHBmdWwgKGxvb2sgYXQgdGhlIFN3aWZ0a2V5IGRhdGEgZGFzaGJvYXJkIGlmIHlvdSBoYXZlIGl0IGxvYWRlZCBvbiB5b3VyIHBob25lKT8NCjMuIEhvdyBzaG91bGQgeW91IGRvY3VtZW50IHRoZSB1c2Ugb2YgeW91ciBkYXRhIHByb2R1Y3QgKHNlcGFyYXRlbHkgZnJvbSBob3cgeW91IGNyZWF0ZWQgaXQpIHNvIHRoYXQgb3RoZXJzIGNhbiByYXBpZGx5IGRlcGxveSB5b3VyIGFsZ29yaXRobT8NCg0KIyMgVGlwcywgdHJpY2tzLCBhbmQgaGludHMNCg0KMS4gQ29uc2lkZXIgdGhlIHNpemUgb2YgdGhlIHByZWRpY3RpdmUgbW9kZWwgeW91IGhhdmUgZGV2ZWxvcGVkLiBZb3UgbWF5IGhhdmUgdG8gc2FjcmlmaWNlIHNvbWUgYWNjdXJhY3kgdG8gaGF2ZSBhIGZhc3QgZW5vdWdoL3NtYWxsIGVub3VnaCBtb2RlbCB0byBsb2FkIGludG8gU2hpbnkuDQoNCg0KIyMgVGFza3MgdG8gYWNjb21wbGlzaA0KDQoxLiBDcmVhdGUgYSBzbGlkZSBkZWNrIHByb21vdGluZyB5b3VyIHByb2R1Y3QuIFdyaXRlIDUgc2xpZGVzIHVzaW5nIFJTdHVkaW8gUHJlc2VudGVyIGV4cGxhaW5pbmcgeW91ciBwcm9kdWN0IGFuZCB3aHkgaXQgaXMgYXdlc29tZSENCg0KIyMgUXVlc3Rpb25zIHRvIGNvbnNpZGVyDQoNCjEuIEhvdyBjYW4geW91IGJyaWVmbHkgZXhwbGFpbiBob3cgeW91ciBwcmVkaWN0aXZlIG1vZGVsIHdvcmtzPw0KMi4gSG93IGNhbiB5b3Ugc3VjY2luY3RseSBxdWFudGl0YXRpdmVseSBzdW1tYXJpemUgdGhlIHBlcmZvcm1hbmNlIG9mIHlvdXIgcHJlZGljdGlvbiBhbGdvcml0aG0/DQozLiBIb3cgY2FuIHlvdSBzaG93IHRoZSB1c2VyIGhvdyB0aGUgcHJvZHVjdCB3b3Jrcz8NCg0KIyMgVGlwcywgdHJpY2tzLCBhbmQgaGludHMNCg0KMS4gVGhlIFJzdHVkaW8gcHJlc2VudGF0aW9uIGluZm9ybWF0aW9uIGlzIGF2YWlsYWJsZSBoZXJlIChbaHR0cHM6Ly9zdXBwb3J0LnJzdHVkaW8uY29tL2hjL2VuLXVzL2FydGljbGVzLzIwMDQ4NjQ2OC1BdXRob3JpbmctUi1QcmVzZW50YXRpb25zXShodHRwczovL3N1cHBvcnQucnN0dWRpby5jb20vaGMvZW4tdXMvYXJ0aWNsZXMvMjAwNDg2NDY4LUF1dGhvcmluZy1SLVByZXNlbnRhdGlvbnMpKS4=</div>
 
 
 
