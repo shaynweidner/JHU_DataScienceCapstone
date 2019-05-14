@@ -1,31 +1,40 @@
 ---
 title: "JHU Data Science Capstone: Milestone Report"
 author: "Shayn Weidner"
-date: "May 6, 2019"
+date: "May 13, 2019"
 output:
   html_document:
     keep_md: true
 ---
 
-# Preface
-
-I'm starting this milestone report without really knowing what is expected of it, because it won't be unlocked until 5/13, and today is 5/6, and honestly, who really wants to wait for a week to see what you're supposed to do next.  I'm guessing they want us to clean the data and perform some EDA, and it's a milestone so you probably need a plan for what else you'll do (and hey, the non-peer-reviewed tasks can be completed as soon as I want, so I have a good idea of what is expected of us for the final product) but if I'm wrong I'll make some corrections/additions.
 
 # Introduction
-The goal of this capstone is to create a predictive text model; that is, we will try to predict the next word in a sequence given the word (or words) preceding it.  In order to develop our predictive text model, we will be using a large corpus of twitter, blog, and news text that has been given to us from [here](https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip).  Within this compressed folder were several files, some in different languages.  The ones we are concerned with are the english language twitter, blog, and news files:
+The goal of this capstone is to create a predictive text model; that is, we will try to predict the next word in a sequence given the word (or words) preceding it.  In order to develop our predictive text model, we will be using a large corpus of twitter, blog, and news text that has been given to us from [here](https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip).  Within this compressed folder were several files, some in different languages.  The ones we are concerned with are the english language twitter, blog, and news files.  The goals for this Milestone Report are to:
+
+1. Demonstrate that you've downloaded the data and have successfully loaded it in.
+2. Create a basic report of summary statistics about the data sets.
+3. Report any interesting findings that you amassed so far.
+4. Get feedback on your plans for creating a prediction algorithm and Shiny app.
+
+We are to be graded based on:
+
+1. Does the link lead to an HTML page describing the exploratory analysis of the training data set?
+2. Has the data scientist done basic summaries of the three files? Word counts, line counts and basic data tables?
+3. Has the data scientist made basic plots, such as histograms to illustrate features of the data?
+4. Was the report written in a brief, concise style, in a way that a non-data scientist manager could appreciate?
 
 # Analysis
 ## Pull in data
 
 ```r
 setwd("~/JHU_DataScienceCapstone")
-con <- file("Data/en_US/en_US.twitter.txt", "rb")
+con <- file("Data/en_US.twitter.txt", "rb")
 twitterData <- readLines(con)
 close(con)
-con <- file("Data/en_US/en_US.blogs.txt", "rb")
+con <- file("Data/en_US.blogs.txt", "rb")
 blogData <- readLines(con)
 close(con)
-con <- file("Data/en_US/en_US.news.txt", "rb")
+con <- file("Data/en_US.news.txt", "rb")
 newsData <- readLines(con)
 close(con)
 head(twitterData,2)
@@ -55,24 +64,47 @@ head(newsData,2)
 ```
 
 
-I had to use the binary read ("rb") setting in *file()*, because it threw an error when trying to read the bank file in normal read mode.
+I had to use the binary read ("rb") setting in *file()*, because it threw an error when trying to read some of the data in normal read mode.
 
-Interesting that the news and blog corpora are as short as they are...I wonder if they broke up entire articles/posts into paragraphs.  At any rate, let's continue with the EDA.
+Interesting that the news and blog corpora items are as short as they are...I wonder if they broke up entire articles/posts into paragraphs.  At any rate, let's continue with the EDA.
 
 ## Exploratory Data Analysis
 
+### Summary Statistics
+
+In all honesty, I don't find the summary statistics very useful here, but we're being graded based on whether we have some, so I'm throwing word count and line count in there
+
+```r
+library(stringr)
+docCounts = data.frame(Media=c("Twitter"
+                          ,"Blog"
+                          ,"News")
+                        ,Word_Count=c(sum(stringr::str_count(twitterData, "\\S+"))
+                           ,sum(stringr::str_count(blogData, "\\S+"))
+                           ,sum(stringr::str_count(newsData, "\\S+"))
+                           )
+                       )
+docCounts$Line_Count = c(length(twitterData)
+                         ,length(blogData)
+                         ,length(newsData))
+docCounts
+```
+
+```
+##     Media Word_Count Line_Count
+## 1 Twitter   30373792    2360148
+## 2    Blog   37334441     899288
+## 3    News   34372598    1010242
+```
+
+So we have more tweets to build our model off of than News, and we have fewer blogs than the other two.  Surprisingly the word count is similar between the three different media types
+
+### Unigrams
 I want to see the most common words without any tokenization/stemming/lemmatization/stopword-removal (sampling down because my machine can't handle all of those documents).  Let's get those words first:
 
 
 ```r
 library(tm)
-```
-
-```
-## Loading required package: NLP
-```
-
-```r
 library(slam)
 set.seed(5-6-2019)
 twitterData <- twitterData[sample(1:length(twitterData),20000)]
@@ -111,68 +143,31 @@ And the histograms of 30 most common words:
 
 ```r
 library(ggplot2)
+print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Word") + ylab("Freq in Sample") + ggtitle("Twitter Word Frequency"))
 ```
 
-```
-## 
-## Attaching package: 'ggplot2'
-```
-
-```
-## The following object is masked from 'package:NLP':
-## 
-##     annotate
-```
+![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-4-1.png)<!-- -->
 
 ```r
-print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
+print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Word") + ylab("Freq in Sample") + ggtitle("Blog Word Frequency"))
 ```
 
-![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-4-2.png)<!-- -->
 
 ```r
-print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
+print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Word") + ylab("Freq in Sample") + ggtitle("News Word Frequency"))
 ```
 
-![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-3-2.png)<!-- -->
-
-```r
-print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
-```
-
-![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-3-3.png)<!-- -->
+![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-4-3.png)<!-- -->
 
 
 The results look logical: "the", "and", "for", "that", and "with" should all appear more oftan than the others, and "you" should be much more common in tweets than in blogs, and much less common in news articles than tweets or blogs.  So separate models for (or a model that accounts for) the different sources could be better than a model that doesn't distinguish between the different texts.  Next let's clean up the corpora, and we'll look at bigrams and trigrams.
 
-I initially was going to remove punctuation, remove numbers, lowercase everything, and lemmatize.  But I've decided against everything except for removing extra whitespace because we'll eventually want to predict what comes after numbers/punctuation as well as predict them after other words.  For instance, we don't want to predict a lemmatized word, because that often won't make sense.  We also would want to predict a capitalized word after a period.  So I'll do my bigram/trigram analysis without that pre-processing done:
+I initially was going to remove punctuation, remove numbers, lowercase everything, and lemmatize.  But I've decided against everything except for removing extra whitespace because we'll eventually want to predict what comes after numbers/punctuation as well as predict them after other words (I'm leaving the code here just to show that I'm not lazy.  For instance, we don't want to predict a lemmatized word, because that often won't make sense.  We also would want to predict a capitalized word after a period.  So I'll do my bigram/trigram analysis without that pre-processing done:
 
 
 ```r
 library(textstem)
-```
-
-```
-## Loading required package: koRpus.lang.en
-```
-
-```
-## Loading required package: koRpus
-```
-
-```
-## Loading required package: sylly
-```
-
-```
-## For information on available language packages for 'koRpus', run
-## 
-##   available.koRpus.lang()
-## 
-## and see ?install.koRpus.lang()
-```
-
-```r
 #corpusTwitter <- tm_map(corpusTwitter, removePunctuation)
 #corpusTwitter <- tm_map(corpusTwitter, removeNumbers)
 #corpusTwitter <- tm_map(corpusTwitter, content_transformer(tolower))
@@ -226,22 +221,22 @@ blogCounts$term <- factor(blogCounts$term, levels = blogCounts$term)
 newsCounts <- newsCounts[1:30,]
 newsCounts$term <- factor(newsCounts$term, levels = newsCounts$term)
 
-print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
+print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1))+ xlab("Bigram") + ylab("Freq in Sample") + ggtitle("Twitter Bigram Frequency"))
 ```
 
-![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 ```r
-print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
+print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Bigram") + ylab("Freq in Sample") + ggtitle("Twitter Bigram Frequency"))
 ```
 
-![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-5-2.png)<!-- -->
+![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-2.png)<!-- -->
 
 ```r
-print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
+print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Bigram") + ylab("Freq in Sample") + ggtitle("Twitter Bigram Frequency"))
 ```
 
-![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-5-3.png)<!-- -->
+![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-3.png)<!-- -->
 
 ```r
 DTMtwitter <- DocumentTermMatrix(corpusTwitter, control=list(tokenize=TrigramTokenizer))
@@ -266,24 +261,24 @@ blogCounts$term <- factor(blogCounts$term, levels = blogCounts$term)
 newsCounts <- newsCounts[1:30,]
 newsCounts$term <- factor(newsCounts$term, levels = newsCounts$term)
 
-print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
+print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Trigram") + ylab("Freq in Sample") + ggtitle("Twitter Trigram Frequency"))
 ```
 
-![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-5-4.png)<!-- -->
+![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-4.png)<!-- -->
 
 ```r
-print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
+print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Trigram") + ylab("Freq in Sample") + ggtitle("Twitter Trigram Frequency"))
 ```
 
-![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-5-5.png)<!-- -->
+![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-5.png)<!-- -->
 
 ```r
-print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
+print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Trigram") + ylab("Freq in Sample") + ggtitle("Twitter Trigram Frequency"))
 ```
 
-![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-5-6.png)<!-- -->
+![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-6.png)<!-- -->
 
 Interesting.  I didn't remove punctuation, so the contractions being split into two words ("don't" is now "don t") in twitter is an artifact of the text.  I think this is even more of a sign that we need to account for the different text sources; that is, I'm going to assume that someone who wants auto-predict in twitter would like me to predict "don t" sometimes.  And while the contractions difference above isn't saving any characters, twitter posts are limited to character counts, so of course they'll have different writing styles!
 
 ## Next steps
-The end goal for this capstone (based on what I've gathered from watching future weeks' videos and readings) is to develop a prediction model to predict the next word in a sequence of text, deploy it to shiny, and also develop a small slidify presentation to pitch it.  My goal is to implemnt a backoff model since I've never done that before, but I'll try some other things along the way, and maybe that's what will make it into the final model.  Ultimately, I've also got to consider the processing limitations of the free shiny server I'll be using (who knows, maybe I'll stand up my own server to host it there!).
+The end goal for this capstone (based on what I've gathered from watching future weeks' videos and readings) is to develop a prediction model to predict the next word in a sequence of text, deploy it to shiny, and also develop a small slidify presentation to pitch it.  My goal is to implemnt a backoff model since I've never done that before and trying new things is waesome, but I'll try some other things along the way, and maybe that's what will make it into the final model.  Ultimately, I've also got to consider the processing limitations of the free shiny server I'll be using (who knows, maybe I'll stand up my own server to host it there!).

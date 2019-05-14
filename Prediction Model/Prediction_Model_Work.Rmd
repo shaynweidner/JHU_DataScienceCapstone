@@ -3,6 +3,7 @@ title: "Capstone Prediction Model Development"
 output: html_notebook
 ---
 
+#Build model
 ## Tasks to accomplish
 
 1. Build a predictive model based on the previous data modeling steps - you may combine the models in any way you think is appropriate.
@@ -14,6 +15,97 @@ output: html_notebook
 2. How much does the model slow down for the performance you gain?
 3. Does perplexity correlate with the other measures of accuracy?
 4. Can you reduce the size of the model (number of parameters) without reducing performance?
+
+### Pull in data
+
+Let's get the data in again
+
+```{r, warning=FALSE, cache=TRUE, message = FALSE}
+setwd("~/JHU_DataScienceCapstone")
+con <- file("Data/en_US.twitter.txt", "rb")
+twitterData <- readLines(con)
+close(con)
+con <- file("Data/en_US.blogs.txt", "rb")
+blogData <- readLines(con)
+close(con)
+con <- file("Data/en_US.news.txt", "rb")
+newsData <- readLines(con)
+close(con)
+```
+
+
+### Sample data down
+
+Previously I pulled the data down to 20k rows for each text source type.  That's less then 1% for twitter data up to 2-3% for blog data. This time I'll start with 2% of all data types, and if that's too much to process then I'll go down from there:
+
+```{r, warning=FALSE, cache=TRUE, message = FALSE}
+set.seed(2019-9-5)
+twitterData <- twitterData[sample(1:length(twitterData),round(length(twitterData)*.02,0))]
+blogData <- blogData[sample(1:length(blogData),round(length(blogData)*.02,0))]
+newsData <- newsData[sample(1:length(newsData),round(length(newsData)*.02,0))]
+```
+
+### n-grams
+
+```{r, warning=FALSE, cache=TRUE, message = FALSE}
+library(tm)
+library(slam)
+
+corpusTwitter <- VCorpus(VectorSource(twitterData))
+corpusBlog <- VCorpus(VectorSource(blogData))
+corpusNews <- VCorpus(VectorSource(newsData))
+
+corpusTwitter <- tm_map(corpusTwitter, stripWhitespace)
+corpusBlog <- tm_map(corpusBlog, stripWhitespace)
+corpusNews <- tm_map(corpusNews, stripWhitespace)
+
+DTMtwitter_uni <- DocumentTermMatrix(corpusTwitter)
+DTMblog_uni <- DocumentTermMatrix(corpusBlog)
+DTMnews_uni <- DocumentTermMatrix(corpusNews)
+
+BigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
+TrigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
+
+DTMtwitter_bi <- DocumentTermMatrix(corpusTwitter, control=list(tokenize=BigramTokenizer))
+DTMblog_bi <- DocumentTermMatrix(corpusBlog, control=list(tokenize=BigramTokenizer))
+DTMnews_bi <- DocumentTermMatrix(corpusNews, control=list(tokenize=BigramTokenizer))
+
+DTMtwitter_tri <- DocumentTermMatrix(corpusTwitter, control=list(tokenize=TrigramTokenizer))
+DTMblog_tri <- DocumentTermMatrix(corpusBlog, control=list(tokenize=TrigramTokenizer))
+DTMnews_tri <- DocumentTermMatrix(corpusNews, control=list(tokenize=TrigramTokenizer))
+
+```
+
+I could keep from re-inventing the wheel by seeing what other people have implemented, but I'd like to see what I can do on my own in this space.
+
+
+
+
+
+
+
+
+
+
+
+```{r, warning=FALSE, cache=TRUE, message = FALSE}
+unigs <- tokens_ngrams(tokens(str_c(c(blogchar,twitterchar,newschar),collapse = " ")),n=1)[[1]]
+unigs <- count(unigs)
+unigs <- unigs[order(-unigs$freq),]
+row.names(unigs) <- 1:nrow(unigs)
+bigrs <- tokens_ngrams(tokens(str_c(c(blogchar,twitterchar,newschar),collapse = " ")),n=2)[[1]]
+bigrs <- count(bigrs)
+bigrs <- bigrs[order(-bigrs$freq),]
+row.names(bigrs) <- 1:nrow(bigrs)
+trigs <- tokens_ngrams(tokens(str_c(c(blogchar,twitterchar,newschar),collapse = " ")),n=3)[[1]]
+trigs <- count(trigs)
+trigs <- trigs[order(-trigs$freq),]
+row.names(trigs) <- 1:nrow(trigs)
+```
+
+
+
+
 
 ## Tasks to accomplish
 

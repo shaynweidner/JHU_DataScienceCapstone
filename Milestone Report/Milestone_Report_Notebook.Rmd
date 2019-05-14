@@ -1,18 +1,27 @@
 ---
 title: "JHU Data Science Capstone: Milestone Report"
 author: "Shayn Weidner"
-date: "May 6, 2019"
+date: "May 13, 2019"
 output:
   html_document:
     keep_md: true
 ---
 
-# Preface
-
-I'm starting this milestone report without really knowing what is expected of it, because it won't be unlocked until 5/13, and today is 5/6, and honestly, who really wants to wait for a week to see what you're supposed to do next.  I'm guessing they want us to clean the data and perform some EDA, and it's a milestone so you probably need a plan for what else you'll do (and hey, the non-peer-reviewed tasks can be completed as soon as I want, so I have a good idea of what is expected of us for the final product) but if I'm wrong I'll make some corrections/additions.
 
 # Introduction
-The goal of this capstone is to create a predictive text model; that is, we will try to predict the next word in a sequence given the word (or words) preceding it.  In order to develop our predictive text model, we will be using a large corpus of twitter, blog, and news text that has been given to us from [here](https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip).  Within this compressed folder were several files, some in different languages.  The ones we are concerned with are the english language twitter, blog, and news files:
+The goal of this capstone is to create a predictive text model; that is, we will try to predict the next word in a sequence given the word (or words) preceding it.  In order to develop our predictive text model, we will be using a large corpus of twitter, blog, and news text that has been given to us from [here](https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip).  Within this compressed folder were several files, some in different languages.  The ones we are concerned with are the english language twitter, blog, and news files.  The goals for this Milestone Report are to:
+
+1. Demonstrate that you've downloaded the data and have successfully loaded it in.
+2. Create a basic report of summary statistics about the data sets.
+3. Report any interesting findings that you amassed so far.
+4. Get feedback on your plans for creating a prediction algorithm and Shiny app.
+
+We are to be graded based on:
+
+1. Does the link lead to an HTML page describing the exploratory analysis of the training data set?
+2. Has the data scientist done basic summaries of the three files? Word counts, line counts and basic data tables?
+3. Has the data scientist made basic plots, such as histograms to illustrate features of the data?
+4. Was the report written in a brief, concise style, in a way that a non-data scientist manager could appreciate?
 
 # Analysis
 ## Pull in data
@@ -33,11 +42,33 @@ head(newsData,2)
 ```
 
 
-I had to use the binary read ("rb") setting in *file()*, because it threw an error when trying to read the bank file in normal read mode.
+I had to use the binary read ("rb") setting in *file()*, because it threw an error when trying to read some of the data in normal read mode.
 
-Interesting that the news and blog corpora are as short as they are...I wonder if they broke up entire articles/posts into paragraphs.  At any rate, let's continue with the EDA.
+Interesting that the news and blog corpora items are as short as they are...I wonder if they broke up entire articles/posts into paragraphs.  At any rate, let's continue with the EDA.
 
 ## Exploratory Data Analysis
+
+### Summary Statistics
+
+In all honesty, I don't find the summary statistics very useful here, but we're being graded based on whether we have some, so I'm throwing word count and line count in there
+```{r, warning=FALSE, cache=TRUE}
+library(stringr)
+docCounts = data.frame(Media=c("Twitter"
+                          ,"Blog"
+                          ,"News")
+                        ,Word_Count=c(sum(stringr::str_count(twitterData, "\\S+"))
+                           ,sum(stringr::str_count(blogData, "\\S+"))
+                           ,sum(stringr::str_count(newsData, "\\S+"))
+                           )
+                       )
+docCounts$Line_Count = c(length(twitterData)
+                         ,length(blogData)
+                         ,length(newsData))
+docCounts
+```
+
+So we have more tweets to build our model off of than News, and we have fewer blogs than the other two.  Surprisingly the word count is similar between the three different media types
+
 ### Unigrams
 I want to see the most common words without any tokenization/stemming/lemmatization/stopword-removal (sampling down because my machine can't handle all of those documents).  Let's get those words first:
 
@@ -80,9 +111,9 @@ And the histograms of 30 most common words:
 
 ```{r, warning=FALSE, cache=TRUE}
 library(ggplot2)
-print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
-print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
-print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
+print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Word") + ylab("Freq in Sample") + ggtitle("Twitter Word Frequency"))
+print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Word") + ylab("Freq in Sample") + ggtitle("Blog Word Frequency"))
+print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Word") + ylab("Freq in Sample") + ggtitle("News Word Frequency"))
 ```
 
 
@@ -144,9 +175,9 @@ blogCounts$term <- factor(blogCounts$term, levels = blogCounts$term)
 newsCounts <- newsCounts[1:30,]
 newsCounts$term <- factor(newsCounts$term, levels = newsCounts$term)
 
-print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
-print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
-print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
+print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1))+ xlab("Bigram") + ylab("Freq in Sample") + ggtitle("Twitter Bigram Frequency"))
+print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Bigram") + ylab("Freq in Sample") + ggtitle("Twitter Bigram Frequency"))
+print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Bigram") + ylab("Freq in Sample") + ggtitle("Twitter Bigram Frequency"))
 
 DTMtwitter <- DocumentTermMatrix(corpusTwitter, control=list(tokenize=TrigramTokenizer))
 DTMblog <- DocumentTermMatrix(corpusBlog, control=list(tokenize=TrigramTokenizer))
@@ -170,9 +201,9 @@ blogCounts$term <- factor(blogCounts$term, levels = blogCounts$term)
 newsCounts <- newsCounts[1:30,]
 newsCounts$term <- factor(newsCounts$term, levels = newsCounts$term)
 
-print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
-print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
-print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)))
+print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Trigram") + ylab("Freq in Sample") + ggtitle("Twitter Trigram Frequency"))
+print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Trigram") + ylab("Freq in Sample") + ggtitle("Twitter Trigram Frequency"))
+print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Trigram") + ylab("Freq in Sample") + ggtitle("Twitter Trigram Frequency"))
 ```
 
 Interesting.  I didn't remove punctuation, so the contractions being split into two words ("don't" is now "don t") in twitter is an artifact of the text.  I think this is even more of a sign that we need to account for the different text sources; that is, I'm going to assume that someone who wants auto-predict in twitter would like me to predict "don t" sometimes.  And while the contractions difference above isn't saving any characters, twitter posts are limited to character counts, so of course they'll have different writing styles!
