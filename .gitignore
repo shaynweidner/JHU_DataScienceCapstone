@@ -1,2 +1,5 @@
 /Data/*
 **_cache
+**/Data/*
+**.Rda
+**rsconnect

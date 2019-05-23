@@ -100,7 +100,7 @@ docCounts
 So we have more tweets to build our model off of than News, and we have fewer blogs than the other two.  Surprisingly the word count is similar between the three different media types
 
 ### Unigrams
-I want to see the most common words without any tokenization/stemming/lemmatization/stopword-removal (sampling down because my machine can't handle all of those documents).  Let's get those words first:
+I want to see the most common words without any stemming/lemmatization/stopword-removal (sampling down because my machine can't handle all of those documents).  Let's get those words first:
 
 
 ```r
@@ -115,9 +115,30 @@ corpusTwitter <- VCorpus(VectorSource(twitterData))
 corpusBlog <- VCorpus(VectorSource(blogData))
 corpusNews <- VCorpus(VectorSource(newsData))
 
-DTMtwitter <- DocumentTermMatrix(corpusTwitter)
-DTMblog <- DocumentTermMatrix(corpusBlog)
-DTMnews <- DocumentTermMatrix(corpusNews)
+DTMtwitter <- DocumentTermMatrix(corpusTwitter
+                                 , control = list(tokenize="words"
+                                                  ,removePunctuation = FALSE
+                                                  ,stopwords = FALSE
+                                                  ,stemming = FALSE
+                                                  ,tolower = FALSE
+                                                  )
+                                 )
+DTMblog <- DocumentTermMatrix(corpusBlog
+                                 , control = list(tokenize="words"
+                                                  ,removePunctuation = FALSE
+                                                  ,stopwords = FALSE
+                                                  ,stemming = FALSE
+                                                  ,tolower = FALSE
+                                                  )
+                                 )
+DTMnews <- DocumentTermMatrix(corpusNews
+                                 , control = list(tokenize="words"
+                                                  ,removePunctuation = FALSE
+                                                  ,stopwords = FALSE
+                                                  ,stemming = FALSE
+                                                  ,tolower = FALSE
+                                                  )
+                                 )
 
 twitterCounts <- data.frame(col_sums(DTMtwitter))
 twitterCounts$term <- row.names(twitterCounts)
@@ -196,12 +217,30 @@ Now let's look at the bi- and trigrams after cleaning (I don't expect the top un
 ```r
 library("RWeka")
 
-BigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
-TrigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
+BigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2, delimiters = " "))
+TrigramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3, delimiters = " "))
 
-DTMtwitter <- DocumentTermMatrix(corpusTwitter, control=list(tokenize=BigramTokenizer))
-DTMblog <- DocumentTermMatrix(corpusBlog, control=list(tokenize=BigramTokenizer))
-DTMnews <- DocumentTermMatrix(corpusNews, control=list(tokenize=BigramTokenizer))
+DTMtwitter <- DocumentTermMatrix(corpusTwitter, control=list(tokenize=BigramTokenizer
+                                                  ,removePunctuation = FALSE
+                                                  ,stopwords = FALSE
+                                                  ,stemming = FALSE
+                                                  ,tolower = FALSE
+                                                  )
+                                 )
+DTMblog <- DocumentTermMatrix(corpusBlog, control=list(tokenize=BigramTokenizer
+                                                  ,removePunctuation = FALSE
+                                                  ,stopwords = FALSE
+                                                  ,stemming = FALSE
+                                                  ,tolower = FALSE
+                                                  )
+                                 )
+DTMnews <- DocumentTermMatrix(corpusNews, control=list(tokenize=BigramTokenizer
+                                                  ,removePunctuation = FALSE
+                                                  ,stopwords = FALSE
+                                                  ,stemming = FALSE
+                                                  ,tolower = FALSE
+                                                  )
+                                 )
 
 twitterCounts <- data.frame(col_sums(DTMtwitter))
 twitterCounts$term <- row.names(twitterCounts)
@@ -227,21 +266,39 @@ print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_b
 ![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
 
 ```r
-print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Bigram") + ylab("Freq in Sample") + ggtitle("Twitter Bigram Frequency"))
+print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Bigram") + ylab("Freq in Sample") + ggtitle("Blog Bigram Frequency"))
 ```
 
 ![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-2.png)<!-- -->
 
 ```r
-print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Bigram") + ylab("Freq in Sample") + ggtitle("Twitter Bigram Frequency"))
+print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Bigram") + ylab("Freq in Sample") + ggtitle("News Bigram Frequency"))
 ```
 
 ![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-3.png)<!-- -->
 
 ```r
-DTMtwitter <- DocumentTermMatrix(corpusTwitter, control=list(tokenize=TrigramTokenizer))
-DTMblog <- DocumentTermMatrix(corpusBlog, control=list(tokenize=TrigramTokenizer))
-DTMnews <- DocumentTermMatrix(corpusNews, control=list(tokenize=TrigramTokenizer))
+DTMtwitter <- DocumentTermMatrix(corpusTwitter, control=list(tokenize=TrigramTokenizer
+                                                  ,removePunctuation = FALSE
+                                                  ,stopwords = FALSE
+                                                  ,stemming = FALSE
+                                                  ,tolower = FALSE
+                                                  )
+                                 )
+DTMblog <- DocumentTermMatrix(corpusBlog, control=list(tokenize=TrigramTokenizer
+                                                  ,removePunctuation = FALSE
+                                                  ,stopwords = FALSE
+                                                  ,stemming = FALSE
+                                                  ,tolower = FALSE
+                                                  )
+                                 )
+DTMnews <- DocumentTermMatrix(corpusNews, control=list(tokenize=TrigramTokenizer
+                                                  ,removePunctuation = FALSE
+                                                  ,stopwords = FALSE
+                                                  ,stemming = FALSE
+                                                  ,tolower = FALSE
+                                                  )
+                                 )
 
 twitterCounts <- data.frame(col_sums(DTMtwitter))
 twitterCounts$term <- row.names(twitterCounts)
@@ -267,18 +324,18 @@ print(ggplot(data = twitterCounts, aes(x=term, y=col_sums.DTMtwitter.)) + geom_b
 ![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-4.png)<!-- -->
 
 ```r
-print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Trigram") + ylab("Freq in Sample") + ggtitle("Twitter Trigram Frequency"))
+print(ggplot(data = blogCounts, aes(x=term, y=col_sums.DTMblog.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Trigram") + ylab("Freq in Sample") + ggtitle("Blog Trigram Frequency"))
 ```
 
 ![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-5.png)<!-- -->
 
 ```r
-print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Trigram") + ylab("Freq in Sample") + ggtitle("Twitter Trigram Frequency"))
+print(ggplot(data = newsCounts, aes(x=term, y=col_sums.DTMnews.)) + geom_bar(stat="identity") + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + xlab("Trigram") + ylab("Freq in Sample") + ggtitle("News Trigram Frequency"))
 ```
 
 ![](Milestone_Report_Notebook_files/figure-html/unnamed-chunk-6-6.png)<!-- -->
 
-Interesting.  I didn't remove punctuation, so the contractions being split into two words ("don't" is now "don t") in twitter is an artifact of the text.  I think this is even more of a sign that we need to account for the different text sources; that is, I'm going to assume that someone who wants auto-predict in twitter would like me to predict "don t" sometimes.  And while the contractions difference above isn't saving any characters, twitter posts are limited to character counts, so of course they'll have different writing styles!
+While there are a lot of similarities in the results between media, there are enough differences that I will build separate predictions depending on the medium.  Twitter posts are limited to character counts, so of course they'll have different writing styles!  Also, twitter posts tend to be much more personal than blog posts and news articles.  And we should seek to predict those differences.
 
 ## Next steps
 The end goal for this capstone (based on what I've gathered from watching future weeks' videos and readings) is to develop a prediction model to predict the next word in a sequence of text, deploy it to shiny, and also develop a small slidify presentation to pitch it.  My goal is to implemnt a backoff model since I've never done that before and trying new things is waesome, but I'll try some other things along the way, and maybe that's what will make it into the final model.  Ultimately, I've also got to consider the processing limitations of the free shiny server I'll be using (who knows, maybe I'll stand up my own server to host it there!).
