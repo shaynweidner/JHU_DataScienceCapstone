@@ -3,3 +3,5 @@
 **/Data/*
 **.Rda
 **rsconnect
+.Rdata
+.Rhistory
